@@ -20,12 +20,21 @@
             "tsConfig": "tsconfig.app.json",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              {
+                "glob": "**/*",
+                "input": "node_modules/cesium/Build/Cesium",
+                "output": "/assets/cesium"
+              }
             ],
             "styles": [
+              "node_modules/cesium/Build/Cesium/Widgets/widgets.css",
               "src/styles.css"
             ],
-            "scripts": []
+            "scripts": [
+              "./node_modules/cesium/Build/Cesium/Cesium.js"
+
+            ]
           },
           "configurations": {
             "production": {
@@ -87,12 +96,18 @@
             "karmaConfig": "karma.conf.js",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              {
+                "glob": "**/*",
+                "input": "node_modules/cesium/Build/Cesium",
+                "output": "assets/cesium"
+              }
             ],
             "styles": [
               "src/styles.css"
             ],
-            "scripts": []
+            "scripts": [  "node_modules/cesium/Build/Cesium/Cesium.js"
+            ]
           }
         }
       }
