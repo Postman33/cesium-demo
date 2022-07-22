@@ -29,7 +29,9 @@ export class CesiumViewerComponent implements OnInit {
     const buildingTileset = viewer.scene.primitives.add(Cesium.createOsmBuildings());
 
     viewer.extend(Cesium.viewerCesiumInspectorMixin);
-    viewer.scene.moon = new Cesium.Moon(); // Почему не работает?
+    viewer.scene.moon = new Cesium.Moon({
+      onlySunLighting: false
+    }); // Почему не работает?
 
     viewer.scene.sun = new Cesium.Sun() // И это тоже
     viewer.camera.flyTo({
@@ -37,6 +39,33 @@ export class CesiumViewerComponent implements OnInit {
     });
 
     viewer.scene.globe.enableLighting = true;
+
+
+    const greenCylinder = viewer.entities.add({
+      name: "Green cylinder with black outline",
+      position: Cesium.Cartesian3.fromDegrees(-100.0, 40.0, 200000.0),
+      cylinder: {
+        length: 400000.0,
+        topRadius: 200000.0,
+        bottomRadius: 200000.0,
+        material: Cesium.Color.GREEN.withAlpha(0.5),
+        outline: true,
+        outlineColor: Cesium.Color.GREEN,
+      },
+    });
+
+    const redCone = viewer.entities.add({
+      name: "Red cone",
+      position: Cesium.Cartesian3.fromDegrees(37.175657,55.989027, 250.0),
+      cylinder: {
+        length: 100.0,
+        topRadius: 0.0,
+        bottomRadius: 100.0,
+        material: Cesium.Color.RED,
+      },
+    });
+
+
     console.log(viewer.scene)
     console.log(  viewer.scene.moon.isDestroyed())
   }
