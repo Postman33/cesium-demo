@@ -1,8 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import * as Cesium from 'cesium';
-import {BillboardCollection} from "cesium";
-import {MPrimitives} from "../../modules/MPrimitives";
-import {SplitMonitor} from "../../modules/SplitMonitor";
+import {BillboardCollection, ScreenSpaceEventType} from 'cesium';
 import {TestDevModule} from "../../modules/TestDevModule";
 
 @Component({
@@ -72,6 +70,13 @@ export class CesiumViewerComponent implements OnInit {
       destination: Cesium.Cartesian3.fromDegrees( 37.175657,55.989027, 800),
     });
 
+
+
+    viewer.screenSpaceEventHandler.setInputAction(function onLeftClick(movement: { position: Cesium.Cartesian2; }) {
+      // If a feature was previously selected, undo the highlight
+      const pickedFeature = viewer.scene.pick(movement.position);
+      console.log(pickedFeature)
+    }, ScreenSpaceEventType.LEFT_CLICK)
     // var center = Cesium.Cartesian3.fromDegrees(37.175657, 55.989027,400);
     // var transform = Cesium.Transforms.eastNorthUpToFixedFrame(center);
     // viewer.scene.camera.lookAtTransform(transform, new Cesium.HeadingPitchRange(0, -Math.PI/4, 900));

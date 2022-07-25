@@ -1,9 +1,10 @@
 Что интересного нашел
 
 По документации
+
 https://cesium.com/learn/cesiumjs-learn/cesiumjs-creating-entities/ - про Entity
 
-
+https://cesium.com/platform/cesium-ion/content/cesium-osm-buildings/ - по OSM Buildings
 
 По коду
 1. Инструменты рисования
