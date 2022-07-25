@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import * as Cesium from 'cesium';
 import {BillboardCollection} from "cesium";
+import {MPrimitives} from "../../modules/MPrimitives";
 
 @Component({
   selector: 'app-cesium-viewer',
@@ -26,8 +27,37 @@ export class CesiumViewerComponent implements OnInit {
         requestWaterMask: true,
         requestVertexNormals : true
       }),
+      // imageryProvider : Cesium.createWorldImagery({
+      //   style : Cesium.IonWorldImageryStyle.AERIAL_WITH_LABELS
+      // }),
     });
+    // иногда называют osmBuildings в документации, что-то типа 3д зданий
     const buildingTileset = viewer.scene.primitives.add(Cesium.createOsmBuildings());
+
+    // buildingTileset.style = new Cesium.Cesium3DTileStyle({
+    //   color: {
+    //     conditions: [
+    //       ["${name} === 'Crown Entertainment Complex'", "color('red')"],
+    //       ["true", "color('white')"],
+    //     ],
+    //   },
+    // });
+
+    buildingTileset.style = new Cesium.Cesium3DTileStyle({
+      defines: {
+        distanceFromComplex:
+          "distance(vec2(${feature['cesium#longitude']}, ${feature['cesium#latitude']}), vec2(37.175657, 55.989027))",
+      },
+      color: {
+        conditions: [
+          ["${distanceFromComplex} > 0.010", "color('#d65c5c')"],
+          ["${distanceFromComplex} > 0.006", "color('#f58971')"],
+          ["${distanceFromComplex} > 0.002", "color('#f5af71')"],
+          ["${distanceFromComplex} > 0.0001", "color('#f5ec71')"],
+          ["true", "color('#ffffff')"],
+        ],
+      },
+    });
 
     viewer.extend(Cesium.viewerCesiumInspectorMixin);
     viewer.scene.moon = new Cesium.Moon({
@@ -39,7 +69,42 @@ export class CesiumViewerComponent implements OnInit {
       destination: Cesium.Cartesian3.fromDegrees( 37.175657,55.989027, 800),
     });
 
-    viewer.scene.globe.enableLighting = true;
+    // var center = Cesium.Cartesian3.fromDegrees(37.175657, 55.989027,400);
+    // var transform = Cesium.Transforms.eastNorthUpToFixedFrame(center);
+    // viewer.scene.camera.lookAtTransform(transform, new Cesium.HeadingPitchRange(0, -Math.PI/4, 900));
+    // viewer.clock.onTick.addEventListener(function(clock) {
+    //   viewer.scene.camera.rotateRight(0.005);
+    // });
+
+
+    // viewer.scene.globe.enableLighting = true;
+    const czml = [
+      {
+        id: "document",
+        name: "CZML Geometries: Polyline",
+        version: "1.0",
+      },
+      {
+        id: "redLine",
+        name: "Red line clamped to terain",
+        polyline: {
+          positions: {
+            cartographicDegrees: [-75, 35, 0, -125, 35, 0],
+          },
+          material: {
+            solidColor: {
+              color: {
+                rgba: [255, 0, 0, 255],
+              },
+            },
+          },
+          width: 5,
+          clampToGround: true,
+        },
+      }
+  ]
+    const dataSourcePromise = Cesium.CzmlDataSource.load(czml);
+    viewer.dataSources.add(dataSourcePromise);
 
 
     const greenCylinder = viewer.entities.add({
@@ -55,16 +120,7 @@ export class CesiumViewerComponent implements OnInit {
       },
     });
 
-    const redCone = viewer.entities.add({
-      name: "Red cone",
-      position: Cesium.Cartesian3.fromDegrees(37.175657,55.989027, 250.0),
-      cylinder: {
-        length: 100.0,
-        topRadius: 0.0,
-        bottomRadius: 100.0,
-        material: Cesium.Color.RED,
-      },
-    });
+
 
     let billboards = viewer.scene.primitives.add( new BillboardCollection());
 
@@ -94,8 +150,17 @@ export class CesiumViewerComponent implements OnInit {
         zIndex: 3,
       },
     });
+
+
+
+  MPrimitives.mInit(viewer);
     console.log(viewer.scene)
     console.log(  viewer.scene.moon.isDestroyed())
+    // var layers = viewer.scene.imageryLayers;
+    // var blackMarble = layers.addImageryProvider(new Cesium.IonImageryProvider({ assetId: 3812 }));
+    // blackMarble.alpha = 0.9; // 0.0 is transparent.  1.0 is opaque.
+    //
+    // blackMarble.brightness = 5.0;
   }
 
 }
