@@ -31,3 +31,6 @@ heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
   * The position height is the height above the terrain.
     */
     RELATIVE_TO_GROUND = 2
+
+4. Слайдер, разделяющий слои на два экрана
+   https://sandcastle.cesium.com/?src=Imagery%20Layers%20Split.html&label=Tutorials

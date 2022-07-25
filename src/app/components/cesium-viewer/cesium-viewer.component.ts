@@ -2,6 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import * as Cesium from 'cesium';
 import {BillboardCollection} from "cesium";
 import {MPrimitives} from "../../modules/MPrimitives";
+import {SplitMonitor} from "../../modules/SplitMonitor";
+import {TestDevModule} from "../../modules/TestDevModule";
 
 @Component({
   selector: 'app-cesium-viewer',
@@ -42,6 +44,7 @@ export class CesiumViewerComponent implements OnInit {
     //     ],
     //   },
     // });
+
 
     buildingTileset.style = new Cesium.Cesium3DTileStyle({
       defines: {
@@ -150,10 +153,21 @@ export class CesiumViewerComponent implements OnInit {
         zIndex: 3,
       },
     });
+    const redCone = viewer.entities.add({
+      name: "Red cone",
+      position: Cesium.Cartesian3.fromDegrees(37.175657,55.989027, 22222.0),
+      cylinder: {
+        length: 100.0,
+        topRadius: 0.0,
+        bottomRadius: 100.0,
+        material: Cesium.Color.RED,
+        heightReference: Cesium.HeightReference.CLAMP_TO_GROUND
+      },
+    });
 
-
-
-  MPrimitives.mInit(viewer);
+  //SplitMonitor.mInit(viewer)
+  //MPrimitives.mInit(viewer);
+    TestDevModule.mInit(viewer)
     console.log(viewer.scene)
     console.log(  viewer.scene.moon.isDestroyed())
     // var layers = viewer.scene.imageryLayers;

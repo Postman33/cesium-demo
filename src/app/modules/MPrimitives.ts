@@ -3,16 +3,75 @@ import * as Cesium from 'cesium';
 export class MPrimitives {
 
   static mInit(viewer: Cesium.Viewer){
-    const redCone = viewer.entities.add({
-      name: "Red cone",
-      position: Cesium.Cartesian3.fromDegrees(37.175657,55.989027, 22222.0),
-      cylinder: {
-        length: 100.0,
-        topRadius: 0.0,
-        bottomRadius: 100.0,
-        material: Cesium.Color.RED,
-        heightReference: Cesium.HeightReference.CLAMP_TO_GROUND
-      },
-    });
+
+  // Что-то не работает в этом коде, не понятн
+    // какая-то ошибка с полем length
+    const snowParticleSize = 12.0;
+    const snowRadius = 100000.0;
+    const minimumSnowImageSize = new Cesium.Cartesian2(
+      snowParticleSize,
+      snowParticleSize
+    );
+    const maximumSnowImageSize = new Cesium.Cartesian2(
+      snowParticleSize * 2.0,
+      snowParticleSize * 2.0
+    );
+    let snowGravityScratch = new Cesium.Cartesian3();
+    const snowUpdate = function (particle: { position: Cesium.Cartesian3; velocity: Cesium.Cartesian3; endColor: { alpha: number; }; }) {
+      snowGravityScratch = Cesium.Cartesian3.normalize(
+        particle.position,
+        snowGravityScratch
+      );
+      Cesium.Cartesian3.multiplyByScalar(
+        snowGravityScratch,
+        Cesium.Math.randomBetween(-30.0, -300.0),
+        snowGravityScratch
+      );
+      particle.velocity = Cesium.Cartesian3.add(
+        particle.velocity,
+        snowGravityScratch,
+        particle.velocity
+      );
+      const distance = Cesium.Cartesian3.distance(
+        viewer.scene.camera.position,
+        particle.position
+      );
+      if (distance > snowRadius) {
+        particle.endColor.alpha = 0.0;
+      } else {
+        particle.endColor.alpha = 1.0 / (distance / snowRadius + 0.1);
+      }
+    };
+
+
+    viewer.scene.primitives.removeAll();
+    viewer.scene.primitives.add(
+      new Cesium.ParticleSystem({
+        modelMatrix: Cesium.Matrix4.fromTranslation(
+          viewer.scene.camera.position
+        ),
+        minimumSpeed: -1.0,
+        maximumSpeed: 0.0,
+        lifetime: 15.0,
+        emitter: new Cesium.SphereEmitter(snowRadius),
+        startScale: 0.5,
+        endScale: 1.0,
+        image: "../assets/snowflake_particle.png",
+        emissionRate: 7000.0,
+        startColor: Cesium.Color.WHITE.withAlpha(0.0),
+        endColor: Cesium.Color.WHITE.withAlpha(1.0),
+        minimumImageSize: minimumSnowImageSize,
+        maximumImageSize: maximumSnowImageSize,
+        updateCallback: snowUpdate,
+      })
+    );
+
+    viewer.scene.skyAtmosphere.hueShift = -0.8;
+    viewer.scene.skyAtmosphere.saturationShift = -0.7;
+    viewer.scene.skyAtmosphere.brightnessShift = -0.33;
+    viewer.scene.fog.density = 0.001;
+    viewer.scene.fog.minimumBrightness = 0.8;
+
+
   }
 }
