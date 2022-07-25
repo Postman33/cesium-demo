@@ -5,6 +5,8 @@
 https://cesium.com/learn/cesiumjs-learn/cesiumjs-creating-entities/ - про Entity
 
 https://cesium.com/platform/cesium-ion/content/cesium-osm-buildings/ - по OSM Buildings
+https://cesium.com/ion/stories/viewer/?id=2f0131ab-3948-4467-947c-411d5705a116
+
 
 По коду
 1. Инструменты рисования
