@@ -8,6 +8,7 @@ https://cesium.com/platform/cesium-ion/content/cesium-osm-buildings/ - по OSM 
 https://cesium.com/ion/stories/viewer/?id=2f0131ab-3948-4467-947c-411d5705a116
 https://taginfo.openstreetmap.org/keys
 https://cesium.com/platform/cesium-ion/content/bing-maps-imagery/
+https://github.com/CesiumGS/3d-tiles/tree/main/specification/Styling
 
 По коду
 1. Инструменты рисования
