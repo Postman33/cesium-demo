@@ -1,6 +1,6 @@
 import * as Cesium from 'cesium';
 
-export class MPrimitives {
+export class Weather {
 
   static mInit(viewer: Cesium.Viewer){
 

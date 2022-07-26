@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import * as Cesium from 'cesium';
 import {BillboardCollection, ScreenSpaceEventType} from 'cesium';
 import {TestDevModule} from "../../modules/TestDevModule";
+import {PropertiesViewer} from "../../modules/PropertiesViewer";
 
 @Component({
   selector: 'app-cesium-viewer',
@@ -21,12 +22,16 @@ export class CesiumViewerComponent implements OnInit {
     Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI1NmQ1OGZlZC00Y2ZkLTRiMmEtYWYwNC0xYTRiYjZjODMxMzciLCJpZCI6MTAyMTU4LCJpYXQiOjE2NTg0ODUzOTZ9.iFLj0GX0uOMvS0hPyjkhfyK9JygdishYZIdag5xm3PY';
     // @ts-ignore
     window.CESIUM_BASE_URL = '/assets/cesium/';
-
     const viewer = new Cesium.Viewer('cesiumContainer', {
       terrainProvider: Cesium.createWorldTerrain({
         requestWaterMask: true,
         requestVertexNormals : true
+
       }),
+      // imageryProvider: Cesium.createWorldImagery({
+      //   style: Cesium.IonWorldImageryStyle.AERIAL_WITH_LABELS,
+      // }),
+      animation: false,
       // imageryProvider : Cesium.createWorldImagery({
       //   style : Cesium.IonWorldImageryStyle.AERIAL_WITH_LABELS
       // }),
@@ -48,14 +53,20 @@ export class CesiumViewerComponent implements OnInit {
       defines: {
         distanceFromComplex:
           "distance(vec2(${feature['cesium#longitude']}, ${feature['cesium#latitude']}), vec2(37.175657, 55.989027))",
+        newHeight: "${feature['cesium#estimatedHeight']}"
       },
       color: {
         conditions: [
-          ["${distanceFromComplex} > 0.010", "color('#d65c5c')"],
-          ["${distanceFromComplex} > 0.006", "color('#f58971')"],
-          ["${distanceFromComplex} > 0.002", "color('#f5af71')"],
-          ["${distanceFromComplex} > 0.0001", "color('#f5ec71')"],
-          ["true", "color('#ffffff')"],
+          // ["${distanceFromComplex} > 0.010", "color('#d65c5c')"],
+          // ["${distanceFromComplex} > 0.006", "color('#f58971')"],
+          // ["${distanceFromComplex} > 0.002", "color('#f5af71')"],
+          // ["${distanceFromComplex} > 0.0001", "color('#f5ec71')"],
+          // ["true", "color('#ffffff')"],
+           ["${newHeight} > 20", "color('#953ead')"],
+           ["${newHeight} > 45", "color('#751a37')"],
+          ["${newHeight} > 60", "color('#751a69')"],
+          ["${newHeight} > 90", "color('#c79228')"],
+          ["true", "color('#abb85c')"]
         ],
       },
     });
@@ -70,7 +81,11 @@ export class CesiumViewerComponent implements OnInit {
       destination: Cesium.Cartesian3.fromDegrees( 37.175657,55.989027, 800),
     });
 
-
+    // Где-то в Австралии
+    // viewer.camera.lookAt(
+    //   Cesium.Cartesian3.fromDegrees(144.96007, -37.82249),
+    //   new Cesium.Cartesian3(0.0, -1500.0, 1200.0)
+    // );
 
     viewer.screenSpaceEventHandler.setInputAction(function onLeftClick(movement: { position: Cesium.Cartesian2; }) {
       // If a feature was previously selected, undo the highlight
@@ -172,6 +187,7 @@ export class CesiumViewerComponent implements OnInit {
 
   //SplitMonitor.mInit(viewer)
   //MPrimitives.mInit(viewer);
+    PropertiesViewer.mInit(viewer)
     TestDevModule.mInit(viewer)
     console.log(viewer.scene)
     console.log(  viewer.scene.moon.isDestroyed())
