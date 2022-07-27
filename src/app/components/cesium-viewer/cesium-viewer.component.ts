@@ -48,7 +48,7 @@ export class CesiumViewerComponent implements OnInit {
     //   },
     // });
 
-    // Как ни странно, порядок оказывается здсеь важен  в conditions
+    // Как ни странно, порядок оказывается здсеь важен
     buildingTileset.style = new Cesium.Cesium3DTileStyle({
       defines: {
         distanceFromComplex:
@@ -65,7 +65,7 @@ export class CesiumViewerComponent implements OnInit {
           ["${newHeight} > 90", "color('#c79228')"],
           ["${newHeight} > 60", "color('#0765A9')"],
           ["${newHeight} > 45", "color('#751a37')"],
-           ["${newHeight} > 20", "color('#953ead')"],
+          ["${newHeight} > 20", "color('#953ead')"],
 
 
 

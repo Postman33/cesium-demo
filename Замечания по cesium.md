@@ -50,3 +50,12 @@ ${feature['cesium#estimatedHeight']}
       },
     });
 ```
+
+## еще об важном, писать вышеупомянутый код в таком стиле <ins>**НЕЛЬЗЯ**</ins>:
+поскольку важен порядок
+```javascript
+          ["${newHeight} > 20", "color('#953ead')"],
+          ["${newHeight} > 45", "color('#751a37')"],
+          ["${newHeight} > 60", "color('#0765A9')"],
+          ["${newHeight} > 90", "color('#c79228')"],
+```
