@@ -21,12 +21,12 @@
  ["${cesium#estimatedHeight} > 20", "color('#953ead')"] 
 ```
 
-что же нужно: добавить в defines новую переменную,
+*что же нужно: добавить в defines новую переменную*,
 ```json 
 ${feature['cesium#estimatedHeight']} 
 ``` 
 и использовать новую переменную
-```json
+```javascript
  ["${newHeight} > 60", "color('#0765A9')"]
 ```
           
