@@ -15,6 +15,7 @@
 | *cesium#estimatedHeight*	 | Высота здания                                       |
 
 ![img_1.png](img_1.png)
+
 например, если требуется менять цвет зданию исходя из высоты, так написать НЕЛЬЗЯ:
 ```json
  ["${cesium#estimatedHeight} > 20", "color('#953ead')"] 
