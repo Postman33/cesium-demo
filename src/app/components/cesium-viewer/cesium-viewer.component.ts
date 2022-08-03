@@ -3,6 +3,7 @@ import * as Cesium from 'cesium';
 import {BillboardCollection, ScreenSpaceEventType} from 'cesium';
 import {TestDevModule} from "../../modules/TestDevModule";
 import {PropertiesViewer} from "../../modules/PropertiesViewer";
+import {CloudsModule} from "../../modules/CloudsModule";
 
 @Component({
   selector: 'app-cesium-viewer',
@@ -16,37 +17,33 @@ export class CesiumViewerComponent implements OnInit {
 
   ngOnInit(): void {
 
-// Your access token can be found at: https://cesium.com/ion/tokens.
-// This is the default access token from your ion account
-
+// Your token can be found at https://cesium.com/ion/tokens
     Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI1NmQ1OGZlZC00Y2ZkLTRiMmEtYWYwNC0xYTRiYjZjODMxMzciLCJpZCI6MTAyMTU4LCJpYXQiOjE2NTg0ODUzOTZ9.iFLj0GX0uOMvS0hPyjkhfyK9JygdishYZIdag5xm3PY';
     // @ts-ignore
     window.CESIUM_BASE_URL = '/assets/cesium/';
     const viewer = new Cesium.Viewer('cesiumContainer', {
+
       terrainProvider: Cesium.createWorldTerrain({
         requestWaterMask: true,
-        requestVertexNormals : true
-
+        requestVertexNormals: true
       }),
-      // imageryProvider: Cesium.createWorldImagery({
-      //   style: Cesium.IonWorldImageryStyle.AERIAL_WITH_LABELS,
-      // }),
+      imageryProvider: Cesium.createWorldImagery(),
       animation: false,
       // imageryProvider : Cesium.createWorldImagery({
       //   style : Cesium.IonWorldImageryStyle.AERIAL_WITH_LABELS
       // }),
     });
+    viewer.scene.globe.enableLighting = false; // Глобальное освещение
+    viewer.extend(Cesium.viewerCesiumInspectorMixin);
+    viewer.scene.moon = new Cesium.Moon({
+      onlySunLighting: false
+    }); // Почему не работает?
+
+    viewer.scene.sun = new Cesium.Sun() // И это тоже
+
     // иногда называют osmBuildings в документации, что-то типа 3д зданий
     const buildingTileset = viewer.scene.primitives.add(Cesium.createOsmBuildings());
 
-    // buildingTileset.style = new Cesium.Cesium3DTileStyle({
-    //   color: {
-    //     conditions: [
-    //       ["${name} === 'Crown Entertainment Complex'", "color('red')"],
-    //       ["true", "color('white')"],
-    //     ],
-    //   },
-    // });
 
     // Как ни странно, порядок оказывается здсеь важен
     buildingTileset.style = new Cesium.Cesium3DTileStyle({
@@ -57,53 +54,25 @@ export class CesiumViewerComponent implements OnInit {
       },
       color: {
         conditions: [
-          // ["${distanceFromComplex} > 0.010", "color('#d65c5c')"],
-          // ["${distanceFromComplex} > 0.006", "color('#f58971')"],
-          // ["${distanceFromComplex} > 0.002", "color('#f5af71')"],
-          // ["${distanceFromComplex} > 0.0001", "color('#f5ec71')"],
-          // ["true", "color('#ffffff')"],
           ["${newHeight} > 90", "color('#c79228')"],
           ["${newHeight} > 60", "color('#0765A9')"],
           ["${newHeight} > 45", "color('#751a37')"],
           ["${newHeight} > 20", "color('#953ead')"],
-
-
-
           ["true", "color('#abb85c')"]
         ],
       },
     });
 
-    viewer.extend(Cesium.viewerCesiumInspectorMixin);
-    viewer.scene.moon = new Cesium.Moon({
-      onlySunLighting: false
-    }); // Почему не работает?
 
-    viewer.scene.sun = new Cesium.Sun() // И это тоже
     viewer.camera.flyTo({
-      destination: Cesium.Cartesian3.fromDegrees( 37.175657,55.989027, 800),
+      destination: Cesium.Cartesian3.fromDegrees(37.175657, 55.989027, 800),
     });
 
-    // Где-то в Австралии
-    // viewer.camera.lookAt(
-    //   Cesium.Cartesian3.fromDegrees(144.96007, -37.82249),
-    //   new Cesium.Cartesian3(0.0, -1500.0, 1200.0)
-    // );
-
     viewer.screenSpaceEventHandler.setInputAction(function onLeftClick(movement: { position: Cesium.Cartesian2; }) {
-      // If a feature was previously selected, undo the highlight
       const pickedFeature = viewer.scene.pick(movement.position);
       console.log(pickedFeature)
     }, ScreenSpaceEventType.LEFT_CLICK)
-    // var center = Cesium.Cartesian3.fromDegrees(37.175657, 55.989027,400);
-    // var transform = Cesium.Transforms.eastNorthUpToFixedFrame(center);
-    // viewer.scene.camera.lookAtTransform(transform, new Cesium.HeadingPitchRange(0, -Math.PI/4, 900));
-    // viewer.clock.onTick.addEventListener(function(clock) {
-    //   viewer.scene.camera.rotateRight(0.005);
-    // });
 
-
-    // viewer.scene.globe.enableLighting = true;
     const czml = [
       {
         id: "document",
@@ -128,7 +97,7 @@ export class CesiumViewerComponent implements OnInit {
           clampToGround: true,
         },
       }
-  ]
+    ]
     const dataSourcePromise = Cesium.CzmlDataSource.load(czml);
     viewer.dataSources.add(dataSourcePromise);
 
@@ -147,19 +116,17 @@ export class CesiumViewerComponent implements OnInit {
     });
 
 
-
-    let billboards = viewer.scene.primitives.add( new BillboardCollection());
+    let billboards = viewer.scene.primitives.add(new BillboardCollection());
 
     billboards.add({
-
-      position : Cesium.Cartesian3.fromDegrees(37.175657,55.989027, 250.0),
-      image : './assets/test.png',
+      position: Cesium.Cartesian3.fromDegrees(37.175657, 55.989027, 250.0),
+      image: './assets/test.png',
       height: 30,
       width: 30,
     });
     billboards.add({
-      position : Cesium.Cartesian3.fromDegrees(37.175657,56.989027, 0.0),
-      image : './assets/test.png',
+      position: Cesium.Cartesian3.fromDegrees(37.175657, 56.989027, 0.0),
+      image: './assets/test.png',
       height: 30,
       width: 30,
     });
@@ -178,7 +145,7 @@ export class CesiumViewerComponent implements OnInit {
     });
     const redCone = viewer.entities.add({
       name: "Red cone",
-      position: Cesium.Cartesian3.fromDegrees(37.175657,55.989027, 22222.0),
+      position: Cesium.Cartesian3.fromDegrees(37.175657, 55.989027, 22222.0),
       cylinder: {
         length: 100.0,
         topRadius: 0.0,
@@ -188,12 +155,12 @@ export class CesiumViewerComponent implements OnInit {
       },
     });
 
-  //SplitMonitor.mInit(viewer)
-  //MPrimitives.mInit(viewer);
+    //SplitMonitor.mInit(viewer)
+    //MPrimitives.mInit(viewer);
     PropertiesViewer.mInit(viewer)
     TestDevModule.mInit(viewer)
-    console.log(viewer.scene)
-    console.log(  viewer.scene.moon.isDestroyed())
+    CloudsModule.mInit(viewer)
+
     // var layers = viewer.scene.imageryLayers;
     // var blackMarble = layers.addImageryProvider(new Cesium.IonImageryProvider({ assetId: 3812 }));
     // blackMarble.alpha = 0.9; // 0.0 is transparent.  1.0 is opaque.

@@ -9,6 +9,8 @@
 
 Источником послужила ссылка https://cesium.com/platform/cesium-ion/content/cesium-osm-buildings/
 
+Если вы знакомы со статьей https://github.com/CesiumGS/3d-tiles/tree/main/specification/Styling, то ничего нового вы не найдете
+
 | Свойство                  | Description                                         |
 |---------------------------|-----------------------------------------------------|
 | elementId                 | Идентификатор здания. Для показа или скрытия здания |
@@ -29,14 +31,15 @@ ${feature['cesium#estimatedHeight']}
 ```javascript
  ["${newHeight} > 60", "color('#0765A9')"]
 ```
-          
-
+          или
+```javascript
+ ["feature['cesium#estimatedHeight'] > 60", "color('#0765A9')"]
+```
 полный код:
 
 ```javascript 
     buildingTileset.style = new Cesium.Cesium3DTileStyle({
       defines: {
-        distanceFromComplex: "distance(vec2(${feature['cesium#longitude']}, ${feature['cesium#latitude']}), vec2(37.175657, 55.989027))",
         newHeight: "${feature['cesium#estimatedHeight']}"
       },
       color: {
@@ -52,6 +55,8 @@ ${feature['cesium#estimatedHeight']}
 ```
 
 ## еще об важном, писать вышеупомянутый код в таком стиле <ins>**НЕЛЬЗЯ**</ins>:
+надо перевернуть данный код задом наперед
+
 поскольку важен порядок
 ```javascript
           ["${newHeight} > 20", "color('#953ead')"],
