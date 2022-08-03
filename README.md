@@ -2,6 +2,8 @@
 
 Проект песочница
 ![image](https://user-images.githubusercontent.com/20001037/182609893-213627b6-c9ad-438f-b83a-5894c98c52d7.png)
+![image](https://user-images.githubusercontent.com/20001037/182631550-b49f4803-a843-4737-aa2e-7b179223bbb8.png)
+
 ## Development server
 
 Запустите `ng serve` для запуска dev сервера. Перейдите по ссылке `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
