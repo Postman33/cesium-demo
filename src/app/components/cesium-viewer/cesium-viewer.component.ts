@@ -46,7 +46,7 @@ export class CesiumViewerComponent implements OnInit {
     // иногда называют osmBuildings в документации, что-то типа 3д зданий
     const buildingTileset = viewer.scene.primitives.add(Cesium.createOsmBuildings());
 
-
+    // стилизация 3d OSM Buildings
     // Как ни странно, порядок оказывается здсеь важен
     // buildingTileset.style = new Cesium.Cesium3DTileStyle({
     //   defines: {
@@ -77,10 +77,6 @@ export class CesiumViewerComponent implements OnInit {
       destination: Cesium.Cartesian3.fromDegrees(37.175657, 55.989027, 800),
     });
 
-    viewer.screenSpaceEventHandler.setInputAction(function onLeftClick(movement: { position: Cesium.Cartesian2; }) {
-      const pickedFeature = viewer.scene.pick(movement.position);
-      console.log(pickedFeature)
-    }, ScreenSpaceEventType.LEFT_CLICK)
 
     const czml = [
       {
