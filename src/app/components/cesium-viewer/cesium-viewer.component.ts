@@ -34,7 +34,7 @@ export class CesiumViewerComponent implements OnInit {
       // }),
     });
     viewer.scene.globe.enableLighting = false; // Глобальное освещение
-    viewer.extend(Cesium.viewerCesiumInspectorMixin);
+  //  viewer.extend(Cesium.viewerCesiumInspectorMixin);
     viewer.scene.moon = new Cesium.Moon({
       onlySunLighting: false
     }); // Почему не работает?
