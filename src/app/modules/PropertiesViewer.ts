@@ -28,21 +28,22 @@ export class PropertiesViewer {
   static mInit(viewer: Cesium.Viewer) {
     const selectedEntity = new Cesium.Entity();
     // ЧАСТЬ ПОСТПРОЦЕССИНГА НАЧАЛО
+    // Для силуэтов
     if (Cesium.PostProcessStageLibrary.isSilhouetteSupported(viewer.scene)) {
       const silhouetteBlue = Cesium.PostProcessStageLibrary.createEdgeDetectionStage();
       silhouetteBlue.uniforms.color = Cesium.Color.BLUE;
       silhouetteBlue.uniforms.length = 0.01;
       silhouetteBlue.selected = [];
 
-      const silhouetteGreen = Cesium.PostProcessStageLibrary.createEdgeDetectionStage();
-      silhouetteGreen.uniforms.color = Cesium.Color.LIME;
-      silhouetteGreen.uniforms.length = 0.01;
-      silhouetteGreen.selected = [];
+      const silhouetteGold = Cesium.PostProcessStageLibrary.createEdgeDetectionStage();
+      silhouetteGold.uniforms.color = Cesium.Color.GOLD;
+      silhouetteGold.uniforms.length = 0.01;
+      silhouetteGold.selected = [];
 
       viewer.scene.postProcessStages.add(
         Cesium.PostProcessStageLibrary.createSilhouetteStage([
           silhouetteBlue,
-          silhouetteGreen,
+          silhouetteGold,
         ])
       );
 
@@ -51,11 +52,11 @@ export class PropertiesViewer {
         let feature = viewer.scene.pick(movement.endPosition);
         // console.log(feature)
         if (!Cesium.defined(feature)) {
-          silhouetteGreen.selected = [];
+          silhouetteGold.selected = [];
           return;
         }
-        // Выделяем объект силуэтом (зеленым)
-        silhouetteGreen.selected = [feature];
+        // Выделяем объект силуэтом (золотым)
+        silhouetteGold.selected = [feature];
 
       }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
     }
@@ -75,8 +76,7 @@ export class PropertiesViewer {
             continue;
           }
 
-
-          selectedEntity.name = feature.getProperty("addr:city");
+          selectedEntity.name =`г. ${feature.getProperty("addr:city") || 'нет данных'}, ${feature.getProperty('is_in:neighbourhood') || ''} `;
           selectedEntity.description = this.generateHTMLDescription(feature);
           viewer.selectedEntity = selectedEntity;
           console.log(propertyName + ': ' + property);

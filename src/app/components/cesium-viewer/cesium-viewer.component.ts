@@ -23,7 +23,8 @@ export class CesiumViewerComponent implements OnInit {
     // @ts-ignore
     window.CESIUM_BASE_URL = '/assets/cesium/';
     const viewer = new Cesium.Viewer('cesiumContainer', {
-
+      requestRenderMode: true,
+      maximumRenderTimeChange: 6,
       terrainProvider: Cesium.createWorldTerrain({
         requestWaterMask: true,
         requestVertexNormals: true
@@ -39,7 +40,7 @@ export class CesiumViewerComponent implements OnInit {
   //  viewer.extend(Cesium.viewerCesiumInspectorMixin);
     viewer.scene.moon = new Cesium.Moon({
       onlySunLighting: false
-    }); // Почему не работает?
+    }); // Работает, но найти Луну нелегко
 
     viewer.scene.sun = new Cesium.Sun() // И это тоже
 
@@ -64,19 +65,28 @@ export class CesiumViewerComponent implements OnInit {
     //     ],
     //   },
     // });
+
     buildingTileset.style = new Cesium.Cesium3DTileStyle({
       defines: {
         distanceFromComplex:
           "10000*distance(vec2(${feature['cesium#longitude']}, ${feature['cesium#latitude']}), vec2(37.175657, 55.989027))",
         newHeight: "${feature['cesium#estimatedHeight']}"
       },
-      color: "rgba(clamp(${distanceFromComplex},0,255),255-clamp(${distanceFromComplex},0,255),clamp(${distanceFromComplex},0,118),1)",
+      color: "rgba(clamp(${newHeight},0,255),255-clamp(${newHeight},0,255),clamp(${newHeight},0,118),1)",
     });
+
+    // buildingTileset.style = new Cesium.Cesium3DTileStyle({
+    //   defines: {
+    //     distanceFromComplex:
+    //       "10000*distance(vec2(${feature['cesium#longitude']}, ${feature['cesium#latitude']}), vec2(37.175657, 55.989027))",
+    //     newHeight: "${feature['cesium#estimatedHeight']}"
+    //   },
+    //   color: "rgba(clamp(${distanceFromComplex},0,255),255-clamp(${distanceFromComplex},0,255),clamp(${distanceFromComplex},0,118),1)",
+    // });
 
     viewer.camera.flyTo({
-      destination: Cesium.Cartesian3.fromDegrees(37.175657, 55.989027, 800),
+      destination: Cesium.Cartesian3.fromDegrees( -73.98579710760927,40.69162777593141, 800),
     });
-
 
     const czml = [
       {
@@ -175,7 +185,6 @@ export class CesiumViewerComponent implements OnInit {
         billboard: {
           image: canvas.toDataURL(),
           verticalOrigin: VerticalOrigin.CENTER,
-
         },
       });
 

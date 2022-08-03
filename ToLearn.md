@@ -1,10 +1,12 @@
 Что интересного нашел
 
-По документации
+По документации 
 
-https://cesium.com/learn/cesiumjs-learn/cesiumjs-creating-entities/ - про Entity
+про Entity
+https://cesium.com/learn/cesiumjs-learn/cesiumjs-creating-entities/
 
-https://cesium.com/platform/cesium-ion/content/cesium-osm-buildings/ - по OSM Buildings
+по OSM Buildings
+https://cesium.com/platform/cesium-ion/content/cesium-osm-buildings/
 https://cesium.com/ion/stories/viewer/?id=2f0131ab-3948-4467-947c-411d5705a116
 https://taginfo.openstreetmap.org/keys
 https://cesium.com/platform/cesium-ion/content/bing-maps-imagery/
