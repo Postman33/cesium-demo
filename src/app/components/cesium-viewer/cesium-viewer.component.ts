@@ -52,7 +52,9 @@ export class CesiumViewerComponent implements OnInit {
       defines: {
         mainMaterial: "${feature['part#building:material']}",
         roofMaterial: "${feature['part#roof:material']}",
-        cesiumColor: "${feature['cesium#color']}"
+        cesiumColor: "${feature['cesium#color']}",
+        height: "${feature['cesium#estimatedHeight']}"
+
       },
       color: {
         conditions: [
@@ -65,29 +67,15 @@ export class CesiumViewerComponent implements OnInit {
           ["${mainMaterial} === 'copper'", "color('peru', 0.7)"],
           ["${roofMaterial} === 'copper'", "color('peru', 0.7)"],
           ["${roofMaterial} === 'glass'", "color('skyblue', 0.5)"],
+          ["${roofMaterial} === 'metal'", "color('lightgrey')"],
           ["${cesiumColor} !== undefined", "color(${cesiumColor},1) * vec4(1,1,1,1)"],
+          ["${height} > 80", "color('royalblue')"],
+          ["${height} > 40", "color('tomato')"],
+          ["${height} > 5", "color('yellowgreen')"],
           ["true", "color('white')"],
         ]
       }
     })
-    // стилизация 3d OSM Buildings
-    // Как ни странно, порядок оказывается здсеь важен
-    // buildingTileset.style = new Cesium.Cesium3DTileStyle({
-    //   defines: {
-    //     distanceFromComplex:
-    //       "distance(vec2(${feature['cesium#longitude']}, ${feature['cesium#latitude']}), vec2(37.175657, 55.989027))",
-    //     newHeight: "${feature['cesium#estimatedHeight']}"
-    //   },
-    //   color: {
-    //     conditions: [
-    //       ["${newHeight} > 90", "color('#c79228')"],
-    //       ["${newHeight} > 60", "color('#0765A9')"],
-    //       ["${newHeight} > 45", "color('#751a37')"],
-    //       ["${newHeight} > 20", "color('#953ead')"],
-    //       ["true", "color('#abb85c')"]
-    //     ],
-    //   },
-    // });
 
     // buildingTileset.style = new Cesium.Cesium3DTileStyle({
     //   defines: {
