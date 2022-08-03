@@ -1,9 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import * as Cesium from 'cesium';
-import {BillboardCollection, ScreenSpaceEventType} from 'cesium';
+import {BillboardCollection, HeightReference, ScreenSpaceEventType, VerticalOrigin} from 'cesium';
 import {TestDevModule} from "../../modules/TestDevModule";
 import {PropertiesViewer} from "../../modules/PropertiesViewer";
 import {CloudsModule} from "../../modules/CloudsModule";
+import {PostProcessSettingsModule} from "../../modules/PostProcessSettingsModule";
 
 @Component({
   selector: 'app-cesium-viewer',
@@ -29,12 +30,13 @@ export class CesiumViewerComponent implements OnInit {
       }),
       imageryProvider: Cesium.createWorldImagery(),
       animation: false,
+      timeline: false
       // imageryProvider : Cesium.createWorldImagery({
       //   style : Cesium.IonWorldImageryStyle.AERIAL_WITH_LABELS
       // }),
     });
     viewer.scene.globe.enableLighting = false; // Глобальное освещение
-    viewer.extend(Cesium.viewerCesiumInspectorMixin);
+  //  viewer.extend(Cesium.viewerCesiumInspectorMixin);
     viewer.scene.moon = new Cesium.Moon({
       onlySunLighting: false
     }); // Почему не работает?
@@ -46,23 +48,30 @@ export class CesiumViewerComponent implements OnInit {
 
 
     // Как ни странно, порядок оказывается здсеь важен
+    // buildingTileset.style = new Cesium.Cesium3DTileStyle({
+    //   defines: {
+    //     distanceFromComplex:
+    //       "distance(vec2(${feature['cesium#longitude']}, ${feature['cesium#latitude']}), vec2(37.175657, 55.989027))",
+    //     newHeight: "${feature['cesium#estimatedHeight']}"
+    //   },
+    //   color: {
+    //     conditions: [
+    //       ["${newHeight} > 90", "color('#c79228')"],
+    //       ["${newHeight} > 60", "color('#0765A9')"],
+    //       ["${newHeight} > 45", "color('#751a37')"],
+    //       ["${newHeight} > 20", "color('#953ead')"],
+    //       ["true", "color('#abb85c')"]
+    //     ],
+    //   },
+    // });
     buildingTileset.style = new Cesium.Cesium3DTileStyle({
       defines: {
         distanceFromComplex:
-          "distance(vec2(${feature['cesium#longitude']}, ${feature['cesium#latitude']}), vec2(37.175657, 55.989027))",
+          "10000*distance(vec2(${feature['cesium#longitude']}, ${feature['cesium#latitude']}), vec2(37.175657, 55.989027))",
         newHeight: "${feature['cesium#estimatedHeight']}"
       },
-      color: {
-        conditions: [
-          ["${newHeight} > 90", "color('#c79228')"],
-          ["${newHeight} > 60", "color('#0765A9')"],
-          ["${newHeight} > 45", "color('#751a37')"],
-          ["${newHeight} > 20", "color('#953ead')"],
-          ["true", "color('#abb85c')"]
-        ],
-      },
+      color: "rgba(clamp(${distanceFromComplex},0,255),255-clamp(${distanceFromComplex},0,255),clamp(${distanceFromComplex},0,118),1)",
     });
-
 
     viewer.camera.flyTo({
       destination: Cesium.Cartesian3.fromDegrees(37.175657, 55.989027, 800),
@@ -97,7 +106,7 @@ export class CesiumViewerComponent implements OnInit {
           clampToGround: true,
         },
       }
-    ]
+    ];
     const dataSourcePromise = Cesium.CzmlDataSource.load(czml);
     viewer.dataSources.add(dataSourcePromise);
 
@@ -111,7 +120,8 @@ export class CesiumViewerComponent implements OnInit {
         bottomRadius: 200000.0,
         material: Cesium.Color.GREEN.withAlpha(0.5),
         outline: true,
-        outlineColor: Cesium.Color.GREEN,
+        outlineColor: Cesium.Color.WHEAT,
+        outlineWidth: 5
       },
     });
 
@@ -151,16 +161,48 @@ export class CesiumViewerComponent implements OnInit {
         topRadius: 0.0,
         bottomRadius: 100.0,
         material: Cesium.Color.RED,
-        heightReference: Cesium.HeightReference.CLAMP_TO_GROUND
+        heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+        fill: false,
+        outline: true,
+        outlineColor: Cesium.Color.fromRgba( 0xFF0000FF),
+        outlineWidth: 5
       },
+    });
+    const pinBuilder = new Cesium.PinBuilder();
+
+    const hospitalPin = Promise.resolve(
+      pinBuilder.fromMakiIconId("hospital", Cesium.Color.RED, 48)
+    ).then(function (canvas) {
+      return viewer.entities.add({
+        name: "Hospital",
+        position: Cesium.Cartesian3.fromDegrees(38.125657, 55.889027),
+        billboard: {
+          image: canvas.toDataURL(),
+          verticalOrigin: VerticalOrigin.CENTER,
+
+        },
+      });
+
+    });const url = Cesium.buildModuleUrl("Assets/Textures/maki/grocery.png");
+    const groceryPin = Promise.resolve(
+      pinBuilder.fromUrl(url, Cesium.Color.GREEN, 48)
+    ).then(function (canvas) {
+      return viewer.entities.add({
+        name: "Grocery store",
+        position: Cesium.Cartesian3.fromDegrees(-75.1705217, 39.921786),
+        billboard: {
+          image: canvas.toDataURL(),
+          verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+        },
+      });
     });
 
     //SplitMonitor.mInit(viewer)
     //MPrimitives.mInit(viewer);
-    PropertiesViewer.mInit(viewer)
-    TestDevModule.mInit(viewer)
-    CloudsModule.mInit(viewer)
-
+    PropertiesViewer.mInit(viewer);
+    TestDevModule.mInit(viewer);
+    CloudsModule.mInit(viewer);
+    PostProcessSettingsModule.mInit(viewer);
     // var layers = viewer.scene.imageryLayers;
     // var blackMarble = layers.addImageryProvider(new Cesium.IonImageryProvider({ assetId: 3812 }));
     // blackMarble.alpha = 0.9; // 0.0 is transparent.  1.0 is opaque.
