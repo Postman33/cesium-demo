@@ -23,8 +23,8 @@ export class CesiumViewerComponent implements OnInit {
     // @ts-ignore
     window.CESIUM_BASE_URL = '/assets/cesium/';
     const viewer = new Cesium.Viewer('cesiumContainer', {
-     // requestRenderMode: true,
-     // maximumRenderTimeChange: 6,
+      // requestRenderMode: true,
+      // maximumRenderTimeChange: 6,
       terrainProvider: Cesium.createWorldTerrain({
         requestWaterMask: true,
         requestVertexNormals: true
@@ -37,7 +37,7 @@ export class CesiumViewerComponent implements OnInit {
       // }),
     });
     viewer.scene.globe.enableLighting = false; // Глобальное освещение
-  //  viewer.extend(Cesium.viewerCesiumInspectorMixin);
+    //  viewer.extend(Cesium.viewerCesiumInspectorMixin);
     viewer.scene.moon = new Cesium.Moon({
       onlySunLighting: false
     }); // Работает, но найти Луну нелегко
@@ -54,7 +54,6 @@ export class CesiumViewerComponent implements OnInit {
         roofMaterial: "${feature['part#roof:material']}",
         cesiumColor: "${feature['cesium#color']}",
         height: "${feature['cesium#estimatedHeight']}"
-
       },
       color: {
         conditions: [
@@ -96,7 +95,7 @@ export class CesiumViewerComponent implements OnInit {
     // });
 
     viewer.camera.flyTo({
-      destination: Cesium.Cartesian3.fromDegrees( -73.98579710760927,40.69162777593141, 800),
+      destination: Cesium.Cartesian3.fromDegrees(-73.98579710760927, 40.69162777593141, 800),
     });
 
     const czml = [
@@ -181,7 +180,7 @@ export class CesiumViewerComponent implements OnInit {
         heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
         fill: false,
         outline: true,
-        outlineColor: Cesium.Color.fromRgba( 0xFF0000FF),
+        outlineColor: Cesium.Color.fromRgba(0xFF0000FF),
         outlineWidth: 5
       },
     });
@@ -199,7 +198,8 @@ export class CesiumViewerComponent implements OnInit {
         },
       });
 
-    });const url = Cesium.buildModuleUrl("Assets/Textures/maki/grocery.png");
+    });
+    const url = Cesium.buildModuleUrl("Assets/Textures/maki/grocery.png");
     const groceryPin = Promise.resolve(
       pinBuilder.fromUrl(url, Cesium.Color.GREEN, 48)
     ).then(function (canvas) {
