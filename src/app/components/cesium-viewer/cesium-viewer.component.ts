@@ -47,6 +47,29 @@ export class CesiumViewerComponent implements OnInit {
     // иногда называют osmBuildings в документации, что-то типа 3д зданий
     const buildingTileset = viewer.scene.primitives.add(Cesium.createOsmBuildings());
 
+
+    buildingTileset.style = new Cesium.Cesium3DTileStyle({
+      defines: {
+        mainMaterial: "${feature['part#building:material']}",
+        roofMaterial: "${feature['part#roof:material']}",
+        cesiumColor: "${feature['cesium#color']}"
+      },
+      color: {
+        conditions: [
+          ["${mainMaterial} === 'glass'", "color('skyblue', 0.5)"],
+          ["${mainMaterial} === 'concrete'", "color('grey')"],
+          ["${mainMaterial} === 'brick'", "color('indianred')"],
+          ["${mainMaterial} === 'stone'", "color('lightslategrey')"],
+          ["${mainMaterial} === 'metal'", "color('lightgrey')"],
+          ["${mainMaterial} === 'steel'", "color('lightsteelblue')"],
+          ["${mainMaterial} === 'copper'", "color('peru', 0.7)"],
+          ["${roofMaterial} === 'copper'", "color('peru', 0.7)"],
+          ["${roofMaterial} === 'glass'", "color('skyblue', 0.5)"],
+          ["${cesiumColor} !== undefined", "color(${cesiumColor},1) * vec4(1,1,1,1)"],
+          ["true", "color('white')"],
+        ]
+      }
+    })
     // стилизация 3d OSM Buildings
     // Как ни странно, порядок оказывается здсеь важен
     // buildingTileset.style = new Cesium.Cesium3DTileStyle({
@@ -66,14 +89,14 @@ export class CesiumViewerComponent implements OnInit {
     //   },
     // });
 
-    buildingTileset.style = new Cesium.Cesium3DTileStyle({
-      defines: {
-        distanceFromComplex:
-          "10000*distance(vec2(${feature['cesium#longitude']}, ${feature['cesium#latitude']}), vec2(37.175657, 55.989027))",
-        newHeight: "${feature['cesium#estimatedHeight']}"
-      },
-      color: "rgba(clamp(${newHeight},0,255),255-clamp(${newHeight},0,255),clamp(${newHeight},0,118),1)",
-    });
+    // buildingTileset.style = new Cesium.Cesium3DTileStyle({
+    //   defines: {
+    //     distanceFromComplex:
+    //       "10000*distance(vec2(${feature['cesium#longitude']}, ${feature['cesium#latitude']}), vec2(37.175657, 55.989027))",
+    //     newHeight: "${feature['cesium#estimatedHeight']}"
+    //   },
+    //   color: "rgba(clamp(${newHeight},0,255),255-clamp(${newHeight},0,255),clamp(${newHeight},0,118),1)",
+    // });
 
     // buildingTileset.style = new Cesium.Cesium3DTileStyle({
     //   defines: {
@@ -101,7 +124,7 @@ export class CesiumViewerComponent implements OnInit {
           positions: {
             cartographicDegrees: [-75, 35, 0, -125, 35, 0],
           },
-          material: {
+          mainMaterial: {
             solidColor: {
               color: {
                 rgba: [255, 0, 0, 255],
