@@ -1,7 +1,7 @@
 # CesiumDemo
 
 Проект песочница
-![img.png](img.png)
+![image](https://user-images.githubusercontent.com/20001037/182609893-213627b6-c9ad-438f-b83a-5894c98c52d7.png)
 ## Development server
 
 Запустите `ng serve` для запуска dev сервера. Перейдите по ссылке `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
