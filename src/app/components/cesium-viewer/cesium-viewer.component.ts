@@ -23,8 +23,8 @@ export class CesiumViewerComponent implements OnInit {
     // @ts-ignore
     window.CESIUM_BASE_URL = '/assets/cesium/';
     const viewer = new Cesium.Viewer('cesiumContainer', {
-      requestRenderMode: true,
-      maximumRenderTimeChange: 6,
+     // requestRenderMode: true,
+     // maximumRenderTimeChange: 6,
       terrainProvider: Cesium.createWorldTerrain({
         requestWaterMask: true,
         requestVertexNormals: true
